@@ -1,0 +1,295 @@
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<style>
+    .clearfix {
+        clear: both;
+    }
+
+    #box {
+        min-width: 350px;
+        max-width: 30%;
+        overflow: auto;
+        margin: 40px auto;
+        border: thick solid #666;
+        padding-bottom: 1px;
+        border-radius: 10px;
+        display: block;
+    }
+
+    #thbanner {
+        display: inline-block;
+        font-size: 3em;
+        color: black;
+        text-align: center;
+        overflow: auto;
+        width: 100%;
+    }
+
+    ul {
+        margin-block-start: auto;
+        padding-inline-start: initial;
+        padding-inline-end: 0px;
+        margin-block-end: 0px;
+    }
+
+    #gameBoard li {
+        display: -webkit-inline-box;
+        float: left;
+        margin: 2px;
+        width: 32%;
+        height: 32%;
+        font-size: 3em;
+        background: rgb(136, 138, 132);
+        color: #ccc;
+        text-align: center;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #tbanner {
+        display: inline-block;
+        border: thick black;
+        overflow: auto;
+        box-shadow: cornflowerblue;
+        width: 100%;
+        text-align: center;
+        font-size: 1em;
+        font-weight: bold;
+
+    }
+
+    .container {
+        min-width: 330px;
+        min-height: 330px;
+        position: relative;
+        margin: 5px;
+    }
+
+    .tbox {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 1;
+    }
+
+    .stack-replay {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0.9;
+        z-index: 10;
+        font-size: 3em;
+        margin: 0px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .stack-top {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0.8;
+        z-index: 5;
+        margin: 0px;
+    }
+
+    .x {
+        min-height: 300px;
+        width: 50%;
+        height: 100%;
+        text-align: center;
+        bottom: 0px;
+        left: 0px;
+        font-size: 3em;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .o {
+        width: 50%;
+        right: 0px;
+        height: 100%;
+        top: 0px;
+        bottom: 0px;
+        position: absolute;
+        vertical-align: middle;
+        display: flex;
+        font-size: 3em;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
+<body>
+    <div id="box">
+        <div id="thbanner">Play Tic Tac Toe</div>
+        <div class="container">
+            <div class="tbox" style="background:transparent;">
+                <ul id="gameBoard">
+                    <li class="tic" id="2"></li>
+                    <li class="tic" id="7"></li>
+                    <li class="tic" id="6"></li>
+                    <li class="tic" id="9"></li>
+                    <li class="tic" id="5"></li>
+                    <li class="tic" id="1"></li>
+                    <li class="tic" id="4"></li>
+                    <li class="tic" id="3"></li>
+                    <li class="tic" id="8"></li>
+                </ul>
+            </div>
+            <div class="stack-replay" style="background: cornflowerblue;">
+                <p>Play</p>
+            </div>
+            <div class="stack-top">
+                <div class="x">
+
+                    <p>X</p>
+                </div>
+                <div class="o">
+                    <p>O</p>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="tbanner">
+            <p>&nbsp; </p>
+        </div>
+    </div>
+    <script>
+        var computerTurn = false;
+        var userChoice;
+        var computerChoice;
+        var userscore = [];
+        var set = [];
+        var computerscore = [];
+        var keys = [];
+        var gameCompleted = false;
+        var emptyspace = ['2', '7', '6', '9', '5', '1', '4', '3', '8'];
+        $('.x').click(function () {
+            userChoice = 'X';
+            computerChoice = 'O';
+            console.log(userChoice + ' ->' + computerChoice);
+            $('#tbanner p').text('Your choice is X.');
+            $('.tbox').css("z-index", '10');
+            $('.stack-replay').css("z-index", '5');
+            $('.stack-top').css("z-index", '0');
+        });
+        $('.o').click(function () {
+            userChoice = 'O';
+            computerChoice = 'X';
+            console.log(userChoice + ' ->' + computerChoice);
+            $('#tbanner p').text('Your choice is O.');
+            $('.tbox').css("z-index", '10');
+            $('.stack-replay').css("z-index", '5');
+            $('.stack-top').css("z-index", '0');
+            computersAttempt();
+        });
+        $('.stack-replay').click(function () {
+            userscore = [];
+            computerscore = [];
+            emptyspace = ['2', '7', '6', '9', '5', '1', '4', '3', '8'];
+            $('#tbanner p').text("Choose 'X' or 'O to start play.");
+            $('.tbox').css("z-index", '5');
+            $('.stack-replay').css("z-index", '0');
+            $('.stack-top').css("z-index", '10');
+            $('li').empty();
+            $('.stack-replay').hide();
+        });
+        $('li').click(function () {
+            if ($(this).is(':empty')) {
+                $(this).text(userChoice);
+                userscore.unshift(parseInt($(this).attr('id')));
+                const indx = emptyspace.indexOf($(this).attr('id').toString());
+                console.log($(this).attr('id') + ' ->' + emptyspace + '-->' + emptyspace.length + '-->uScore ' + userscore);
+                if (emptyspace.length < 6 && emptyspace.length > 0) {
+                    set = [];
+                    keys = userscore;
+                    recursive(2, 0, []);
+                    console.log('set->' + set);
+                    if (set.find(element => element == 15) != undefined) {
+                        console.log('User Won!');
+                        result('You won the Game!');
+                        emptyspace = [];
+                        gameCompleted = true;
+                    }
+                }
+                if (indx > -1) {
+                    emptyspace.splice(indx, 1);
+                }
+                if (emptyspace.length > 0) {
+                    console.log('space available');
+                    computerTurn = true;
+                    computersAttempt();
+                } else {
+                    if (!gameCompleted) {
+                        console.log('from user!');
+                        result("It's a draw!");
+                    }
+                }
+            }
+        });
+
+        function result(e) {
+            $('#tbanner p').text(e);
+            $('.tbox').css("z-index", '5');
+            $('.stack-replay p').text('Play again');
+            $('.stack-replay').css("z-index", '10');
+            $('.stack-top').css("z-index", '0');
+            $('.stack-replay').show();
+
+        }
+        function computersAttempt(e) {
+            const indxc = Math.floor(Math.random() * emptyspace.length);
+            $('#' + emptyspace[indxc]).text(computerChoice);
+            $('#' + emptyspace[indxc]).prop('click', false);
+            computerscore.unshift(parseInt(emptyspace[indxc]));
+            console.log('Computer Turn ' + emptyspace.length + ';' + indxc + ':' + emptyspace[indxc] + ' : ' + computerscore);
+            computerTurn = false;
+            if (emptyspace.length < 6 && emptyspace.length > 0) {
+                set = [];
+                keys = computerscore;
+                recursive(2, 0, []);
+                console.log('set->' + set);
+                if (set.find(element => element == 15) != undefined) {
+                    gameCompleted = true;
+                    console.log('Computer has won the game!');
+                    result('Computer has won the game');
+                    emptyspace = [];
+                }
+            }
+            emptyspace.splice(indxc, 1);
+            if (emptyspace.length == 0 && !gameCompleted) {
+                result("It's a draw!");
+            }
+        }
+        function recursive(cross, s, a) {
+            for (var i = s; i < keys.length; i++) {
+                if (!cross) {
+                    var b = a.slice(0);
+                    b.push(keys[i]);
+                    set.push(b.reduce(function (x, y) { return x + y }));
+                    console.log(i + ' set -->:' + set + ' -> ' + b + '-a:' + a);
+                } else {
+                    a.push(keys[i]);
+                    console.log(i + '-->a:' + a + 'cross:' + cross);
+                    recursive(cross - 1, i + 1, a);
+                    a.splice(-1, 1);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
