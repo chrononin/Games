@@ -1,0 +1,89 @@
+#box {
+    min-width: 360px;
+    max-width: 30%;
+    overflow: auto;
+    margin: 40px auto;
+    border: thick solid #666;
+    padding-bottom: 1px;
+    border-radius: 10px;
+    display: block;
+}
+
+#thbanner {
+    display: inline-block;
+    font-size: 3em;
+    color: black;
+    text-align: center;
+    overflow: auto;
+    width: 100%;
+}
+
+ul {
+    margin-block-start: auto;
+    padding-inline-start: initial;
+    padding-inline-end: 0px;
+    margin-block-end: 0px;
+}
+
+#gameBoard li {
+    display: -webkit-inline-box;
+    float: left;
+    margin: auto;
+    padding: 0%;
+    width: 24%;
+    height: 24%;
+    font-size: 3em;
+    background: rgb(136, 138, 132);
+    color: #ccc;
+    text-align: center;
+    border:solid 1px rgb(53, 51, 53);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#tbanner {
+    display: inline-block;
+    border: thick black;
+    overflow: auto;
+    box-shadow: cornflowerblue;
+    width: 100%;
+    text-align: center;
+    font-size: 1em;
+    font-weight: bold;
+
+}
+
+.container {
+    min-width: 330px;
+    min-height: 330px;
+    position: relative;
+    margin: 5px;
+}
+
+.tbox {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 1;
+    background:transparent;
+}
+
+.stack-replay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.9;
+    z-index: 10;
+    font-size: 3em;
+    margin: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: cornflowerblue;
+}
