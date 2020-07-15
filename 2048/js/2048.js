@@ -1,13 +1,13 @@
 $(document).ready(function () {
-    let emptySet; 
+    let emptySet;
     let stka = [];
     let stkb = [];
     let stkc = [];
     let stkd = [];
     let e2 = [];
     let winValue = 2048;
-    let nMvUpDn=false;
-    let nMvLfRt=false;
+    let nMvUpDn = false;
+    let nMvLfRt = false;
     a = 0;
     b = 0;
     board = {
@@ -38,7 +38,7 @@ $(document).ready(function () {
 
     };
     $('.stack-replay').click(function () {
-        $('#tbanner p').text("Use touch or arrow keys to play.");
+        $('#tbanner p').text("Use (keyboard) arrow keys to play.");
         $('.stack-top').hide();
         $('li').empty();
         $('.stack-replay').hide();
@@ -48,27 +48,23 @@ $(document).ready(function () {
         pickTwoEmptySpace();
     });
 
-    function colorMeBox()
-    {
-        for( i=1; i<=16; i++)
-        {
-            if($("#"+i).text().trim()){
-                bgcolor = "rgb(212, 170, "+Math.floor((200-($("#"+i).text()*20)))+")";
-            $("#"+i).css("background-color",bgcolor);
+    function colorMeBox() {
+        for (i = 1; i <= 16; i++) {
+            if ($("#" + i).text().trim()) {
+                bgcolor = "rgb(212, 170, " + Math.floor((200 - ($("#" + i).text() * 20))) + ")";
+                $("#" + i).css("background-color", bgcolor);
             }
-            else
-            {
-                $("#"+i).css("background-color","rgb(126, 126, 126,0.6)"); 
+            else {
+                $("#" + i).css("background-color", "rgb(126, 126, 126,0.6)");
             }
         }
     }
 
-    function gameOver()
-    {
+    function gameOver() {
         console.log('No more move available!');
         $('#tbanner p').text("Game over!");
         $('.stack-replay').text('Replay');
-        $('.stack-replay').css('opacity',0.7);
+        $('.stack-replay').css('opacity', 0.7);
         $('.stack-replay').show();
     }
 
@@ -86,21 +82,19 @@ $(document).ready(function () {
                     }
                     ret[i] = position;
                     $('#' + position).text(getValue);
-                    if(Math.floor(Math.random()*2)>0 && emptySet.size>0)
-                    {
+                    if (Math.floor(Math.random() * 2) > 0 && emptySet.size > 0) {
                         i++;
                     }
                     i++;
                 }
             }
         }
-        else
-        {
+        else {
             console.log('No more empty space available!')
         }
 
         colorMeBox();
-        
+
     }
     function isEmptyOrSpaces(str) {
         return str == null || str.trim == '';
@@ -109,65 +103,81 @@ $(document).ready(function () {
         return Math.floor(Math.round(Math.random(), 1) * 2) + 2;
     }
 
-    function declareWin()
-    {
+    function declareWin() {
         console.log('You have won the game!');
-            $('#tbanner p').text("You have completed "+winValue+".");
-            $('.stack-replay').text('You Win!');
-            $('.stack-replay').show();
+        $('#tbanner p').text("You have completed " + winValue + ".");
+        $('.stack-replay').text('You Win!');
+        $('.stack-replay').show();
     }
 
     function evaluateBoard(e, d) {
         e2 = [];
-            if ($('#' + e[0]).text().trim()>0) {
-                stka.push($('#' + e[0]).text());
-            } 
-            if ($('#' + e[1]).text().trim()>0) {
-                stkb.push($('#' + e[1]).text());
-            }
-            if ($('#' + e[2]).text().trim()>0) {
-                stkc.push($('#' + e[2]).text());
-            }
-            if ($('#' + e[3]).text().trim()>0) {
-                stkd.push($('#' + e[3]).text());
-            }
+        if ($('#' + e[0]).text().trim() > 0) {
+            stka.push($('#' + e[0]).text());
+        }
+        if ($('#' + e[1]).text().trim() > 0) {
+            stkb.push($('#' + e[1]).text());
+        }
+        if ($('#' + e[2]).text().trim() > 0) {
+            stkc.push($('#' + e[2]).text());
+        }
+        if ($('#' + e[3]).text().trim() > 0) {
+            stkd.push($('#' + e[3]).text());
+        }
 
-            for (i = 0; i < e.length; i++) {
-                e2[i] = board.adjacency[e[i]][d];
-            }
+        for (i = 0; i < e.length; i++) {
+            e2[i] = board.adjacency[e[i]][d];
+        }
 
-            if (board.adjacency[e[0]][d] != 0) {
-                evaluateBoard(e2, d);
+        if (board.adjacency[e[0]][d] != 0) {
+            evaluateBoard(e2, d);
+        }
+        // TO POP-ing the values are suming up 
+        //row 0
+
+        if (stka.length > 1) {
+            a = Number(stka.pop()); b = Number(stka.pop());
+            if (a == b) {
+                $('#' + e[0]).text(a + b); emptySet.delete(e[0]); if (a + b == winValue) { (declareWin()) };
+            } else { stka.push(b); $('#' + e[0]).text(a); emptySet.delete(e[0]); }
+        } else { if (stka.length == 1) { a = stka.pop(); $('#' + e[0]).text(a); emptySet.delete(e[0]); } else { $('#' + e[0]).text(''); emptySet.add(e[0]); } }
+        //row 1
+        if (stkb.length > 1) {
+            a = Number(stkb.pop()); b = Number(stkb.pop());
+            if (a == b) {
+                $('#' + e[1]).text(a + b); emptySet.delete(e[1]); if (a + b == winValue) { (declareWin()) };
+            } else {
+                stkb.push(b); $('#' + e[1]).text(a); emptySet.delete(e[1]);
             }
-            // TO POP-ing the values are suming up 
-            //row 0
-            
-            if (stka.length > 1) { a = Number(stka.pop()); b = Number(stka.pop());
-                if (a == b) { $('#' + e[0]).text(a + b); emptySet.delete(e[0]); if (a+b==winValue){(declareWin())};
-                } else { stka.push(b);$('#' + e[0]).text(a); emptySet.delete(e[0]);}
-            } else {if (stka.length == 1) {a = stka.pop(); $('#' + e[0]).text(a); emptySet.delete(e[0]);} else {$('#' + e[0]).text(''); emptySet.add(e[0]); }}
-            //row 1
-            if (stkb.length > 1) { a = Number(stkb.pop()); b = Number(stkb.pop());
-                if (a == b) {$('#' + e[1]).text(a + b); emptySet.delete(e[1]); if (a+b==winValue){(declareWin())};
-                 } else { stkb.push(b);$('#' + e[1]).text(a); emptySet.delete(e[1]);
-                }
-            } else {if (stkb.length == 1) {a = stkb.pop(); $('#' + e[1]).text(a); emptySet.delete(e[1]);} else {$('#' + e[1]).text(''); emptySet.add(e[1]); }}
-            //row 2
-            if (stkc.length > 1) { a = Number(stkc.pop()); b = Number(stkc.pop());
-                if (a == b) { $('#' + e[2]).text(a + b); emptySet.delete(e[2]); if (a+b==winValue){(declareWin())};
-                    } else { stkc.push(b);$('#' + e[2]).text(a); emptySet.delete(e[2]);}
-            } else {if (stkc.length == 1) {a = stkc.pop(); $('#' + e[2]).text(a); emptySet.delete(e[2]);} else {$('#' + e[2]).text(''); emptySet.add(e[2]);}}
-            //row 3
-            if (stkd.length > 1) { a = Number(stkd.pop()); b = Number(stkd.pop());
-                if (a == b) { $('#' + e[3]).text(a + b); emptySet.delete(e[3]); if (a+b==winValue){(declareWin())};
-                    } else { stkd.push(b);$('#' + e[3]).text(a); emptySet.delete(e[3]);
-                }
-            }else {if (stkd.length == 1) {a = stkd.pop(); $('#' + e[3]).text(a);emptySet.delete(e[3]);} else {$('#' + e[3]).text('');emptySet.add(e[3]); }}
+        } else { if (stkb.length == 1) { a = stkb.pop(); $('#' + e[1]).text(a); emptySet.delete(e[1]); } else { $('#' + e[1]).text(''); emptySet.add(e[1]); } }
+        //row 2
+        if (stkc.length > 1) {
+            a = Number(stkc.pop()); b = Number(stkc.pop());
+            if (a == b) {
+                $('#' + e[2]).text(a + b); emptySet.delete(e[2]); if (a + b == winValue) { (declareWin()) };
+            } else { stkc.push(b); $('#' + e[2]).text(a); emptySet.delete(e[2]); }
+        } else { if (stkc.length == 1) { a = stkc.pop(); $('#' + e[2]).text(a); emptySet.delete(e[2]); } else { $('#' + e[2]).text(''); emptySet.add(e[2]); } }
+        //row 3
+        if (stkd.length > 1) {
+            a = Number(stkd.pop()); b = Number(stkd.pop());
+            if (a == b) {
+                $('#' + e[3]).text(a + b); emptySet.delete(e[3]); if (a + b == winValue) { (declareWin()) };
+            } else {
+                stkd.push(b); $('#' + e[3]).text(a); emptySet.delete(e[3]);
+            }
+        } else { if (stkd.length == 1) { a = stkd.pop(); $('#' + e[3]).text(a); emptySet.delete(e[3]); } else { $('#' + e[3]).text(''); emptySet.add(e[3]); } }
 
 
     }
 
 
+    // for the manual key 
+    $("#arrowl").click(function () { document.dispatchEvent(new KeyboardEvent('keydown', { 'keyCode': 37 })); });
+    $("#arrowr").click(function () { document.dispatchEvent(new KeyboardEvent('keydown', { 'keyCode': 39 })); });
+    $("#arrowu").click(function () { document.dispatchEvent(new KeyboardEvent('keydown', { 'keyCode': 38 })); });
+    $("#arrowd").click(function () { document.dispatchEvent(new KeyboardEvent('keydown', { 'keyCode': 40 })); });
+
+    // for the default || keyboard keys
     document.onkeydown = checkKey;
 
     function checkKey(e) {
@@ -176,40 +186,44 @@ $(document).ready(function () {
         e = e || window.event;
         if (e.keyCode == '37') {
             evaluateBoard(board.key.left, 0);
-            if(!emptySet.size==0){
-                nMvLfRt = false; 
-             pickTwoEmptySpace();
+            if (!emptySet.size == 0) {
+                nMvLfRt = false;
+                pickTwoEmptySpace();
             }
-            else{ nMvLfRt = true; if (nMvLfRt && nMvUpDn) {gameOver();} 
+            else {
+                nMvLfRt = true; if (nMvLfRt && nMvUpDn) { gameOver(); }
             }
-            
+
 
         } else if (e.keyCode == '38') {
             evaluateBoard(board.key.up, 1);
-            if(!emptySet.size==0){
+            if (!emptySet.size == 0) {
                 nMvUpDn = false;
                 pickTwoEmptySpace();
-               }
-               else{ nMvUpDn = true; if (nMvLfRt && nMvUpDn) {gameOver();} 
+            }
+            else {
+                nMvUpDn = true; if (nMvLfRt && nMvUpDn) { gameOver(); }
             }
 
 
         } else if (e.keyCode == '39') {
             evaluateBoard(board.key.right, 2)
-            if(!emptySet.size==0){
-                nMvLfRt = false; 
+            if (!emptySet.size == 0) {
+                nMvLfRt = false;
                 pickTwoEmptySpace();
-               }
-               else{ nMvLfRt = true; if (nMvLfRt && nMvUpDn) {gameOver();} 
+            }
+            else {
+                nMvLfRt = true; if (nMvLfRt && nMvUpDn) { gameOver(); }
             }
 
         } else if (e.keyCode == '40') {
             evaluateBoard(board.key.down, 3);
-            if(!emptySet.size==0){
+            if (!emptySet.size == 0) {
                 nMvUpDn = false;
                 pickTwoEmptySpace();
-               }
-               else{ nMvUpDn = true; if (nMvLfRt && nMvUpDn) {gameOver();} 
+            }
+            else {
+                nMvUpDn = true; if (nMvLfRt && nMvUpDn) { gameOver(); }
             }
         }
     }
