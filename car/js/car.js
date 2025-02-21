@@ -1,6 +1,7 @@
 let pos =[0,0,0,0,0]
 let fPlay= true;
 let cPosition= Math.ceil(Number(9/2));
+let speedFactor = 1.00;
 score =0
 $(document).ready(function () {
     for (i = 1; i < 46; i++) {
@@ -30,6 +31,8 @@ $(document).ready(function () {
     // for the manual key 
     $("#arrowl").click(function () { document.dispatchEvent(new KeyboardEvent('keydown', { 'keyCode': 37 })); });
     $("#arrowr").click(function () { document.dispatchEvent(new KeyboardEvent('keydown', { 'keyCode': 39 })); });
+	$("#arrowu").click(function () { document.dispatchEvent(new KeyboardEvent('keydown', { 'keyCode': 38 })); });
+    $("#arrowd").click(function () { document.dispatchEvent(new KeyboardEvent('keydown', { 'keyCode': 40 })); });
    
 
 });
@@ -93,7 +96,7 @@ function flow(iPostion) {
                 }
                 if(fPlay){flow(iPostion); }
                 
-            }, 1000);
+            }, 1000*speedFactor);
         }
 
 
@@ -106,13 +109,26 @@ function moveCar(e){
         if (e.keyCode == '37') {
              if(cPosition>1){
                 cPosition= cPosition-1;
-            }
-            
-            
+            }     
         }
-        else if (e.keyCode == '39') {
+        else if (e.keyCode == '38') {
+            if(speedFactor>0.2){
+                speedFactor = Number(Number(speedFactor) - Number(.1));
+				console.log(speedFactor)
+				$('#arrown').text(speedFactor.toFixed(2));
+				
+            }
+        }
+		else if (e.keyCode == '39') {
             if(cPosition<9){
                 cPosition= cPosition+1;
+            }
+        }
+		else if (e.keyCode == '40') {
+            if(speedFactor<2 ){
+                speedFactor = Number(Number(speedFactor) + Number(.1));
+				console.log(speedFactor)
+				$('#arrown').text(speedFactor.toFixed(2));
             }
         }
 }
